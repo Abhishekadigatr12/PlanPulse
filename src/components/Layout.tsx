@@ -1,11 +1,13 @@
 import React from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Settings, Flame } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Settings, Flame, LogOut } from 'lucide-react';
 import { useStudyStore } from '../store/useStudyStore';
+import { useAuthStore } from '../store/useAuthStore';
 import { cn } from './ProgressBar';
 
 export const Layout: React.FC = () => {
   const { streak } = useStudyStore();
+  const { logout, userId } = useAuthStore();
   const location = useLocation();
 
   return (
@@ -60,10 +62,23 @@ export const Layout: React.FC = () => {
           </NavLink>
         </nav>
 
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-1">
           <button className="flex items-center space-x-3 px-3 py-2.5 rounded-lg font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-200 w-full transition-colors">
             <Settings className="w-5 h-5" />
             <span>Settings</span>
+          </button>
+          <div
+            aria-label="Logged in as"
+            className="px-3 py-1 text-xs text-gray-400 dark:text-gray-500 truncate"
+          >
+            {userId}
+          </div>
+          <button
+            onClick={logout}
+            className="flex items-center space-x-3 px-3 py-2.5 rounded-lg font-medium text-red-500 hover:bg-red-50 hover:text-red-600 dark:text-red-400 dark:hover:bg-red-500/10 w-full transition-colors"
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Sign Out</span>
           </button>
         </div>
       </aside>
