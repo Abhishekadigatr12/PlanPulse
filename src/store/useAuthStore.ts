@@ -8,10 +8,6 @@ interface AuthState {
   logout: () => void;
 }
 
-// Hardcoded demo credentials – replace with real auth as needed.
-const DEMO_USER_ID = 'admin';
-const DEMO_PASSWORD = 'password';
-
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
@@ -19,7 +15,9 @@ export const useAuthStore = create<AuthState>()(
       isLoggedIn: false,
 
       login: (userId: string, password: string) => {
-        if (userId === DEMO_USER_ID && password === DEMO_PASSWORD) {
+        const validUserId = import.meta.env.VITE_DEMO_USER_ID ?? 'admin';
+        const validPassword = import.meta.env.VITE_DEMO_PASSWORD ?? 'password';
+        if (userId === validUserId && password === validPassword) {
           set({ userId, isLoggedIn: true });
           return true;
         }

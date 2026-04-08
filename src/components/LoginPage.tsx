@@ -86,11 +86,6 @@ export const LoginPage: React.FC = () => {
               <span>Sign In</span>
             </button>
           </form>
-
-          {/* Demo hint */}
-          <p className="mt-5 text-center text-xs text-gray-400 dark:text-gray-500">
-            Demo credentials: <span className="font-medium">admin</span> / <span className="font-medium">password</span>
-          </p>
         </div>
       </div>
     </div>

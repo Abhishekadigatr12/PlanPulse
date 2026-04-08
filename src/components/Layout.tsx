@@ -67,7 +67,12 @@ export const Layout: React.FC = () => {
             <Settings className="w-5 h-5" />
             <span>Settings</span>
           </button>
-          <div className="px-3 py-1 text-xs text-gray-400 dark:text-gray-500 truncate">{userId}</div>
+          <div
+            aria-label="Logged in as"
+            className="px-3 py-1 text-xs text-gray-400 dark:text-gray-500 truncate"
+          >
+            {userId}
+          </div>
           <button
             onClick={logout}
             className="flex items-center space-x-3 px-3 py-2.5 rounded-lg font-medium text-red-500 hover:bg-red-50 hover:text-red-600 dark:text-red-400 dark:hover:bg-red-500/10 w-full transition-colors"
