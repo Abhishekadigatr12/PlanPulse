@@ -1,9 +1,39 @@
+import { useEffect } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { Sidebar } from './Sidebar';
 
 export function Layout() {
-  const { auth } = useStore();
+  const { auth, markCurrentUserOnline, markCurrentUserOffline } = useStore();
+
+  useEffect(() => {
+    if (!auth.isAuthenticated || !auth.currentUser) return;
+
+    markCurrentUserOnline();
+    const heartbeatId = window.setInterval(() => {
+      markCurrentUserOnline();
+    }, 30000);
+
+    const onFocus = () => markCurrentUserOnline();
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        markCurrentUserOnline();
+      }
+    };
+    const onBeforeUnload = () => markCurrentUserOffline();
+
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('beforeunload', onBeforeUnload);
+
+    return () => {
+      window.clearInterval(heartbeatId);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('beforeunload', onBeforeUnload);
+      markCurrentUserOffline();
+    };
+  }, [auth.isAuthenticated, auth.currentUser, markCurrentUserOnline, markCurrentUserOffline]);
 
   if (!auth.isAuthenticated) {
     return <Navigate to="/login" replace />;

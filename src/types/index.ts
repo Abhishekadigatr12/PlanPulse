@@ -95,6 +95,8 @@ export interface AppState {
   login: (username: string, password: string) => boolean;
   register: (username: string, password: string) => boolean;
   logout: () => void;
+  markCurrentUserOnline: () => void;
+  markCurrentUserOffline: () => void;
   
   // Actions - Courses
   addCourse: (course: Omit<Course, 'id' | 'createdAt' | 'updatedAt'>) => void;
@@ -136,5 +138,6 @@ export interface AppState {
     totalUsers: number;
     activeUsersLast30Days: number;
     usersWithCourses: number;
+    onlineUsersNow: number;
   } | null;
 }

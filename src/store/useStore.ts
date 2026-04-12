@@ -9,6 +9,9 @@ import type { AppState, Course, Topic, Item, Note, Resource, UserData, ProgressL
 
 const LOGIN_WINDOW_MS = 5 * 60 * 1000;
 const MAX_LOGIN_ATTEMPTS = 8;
+const PRESENCE_STORAGE_KEY = 'planplus-presence-v1';
+const ONLINE_TTL_MS = 90 * 1000;
+const ADMIN_USERNAMES = new Set(['admin', 'abhishek']);
 
 const loginAttempts = new Map<string, { count: number; firstAttemptAt: number; blockedUntil: number }>();
 
@@ -80,6 +83,63 @@ const clearFailedLogin = (username: string): void => {
   loginAttempts.delete(username);
 };
 
+const isAdminUser = (username: string | null): boolean => {
+  if (!username) return false;
+  return ADMIN_USERNAMES.has(username.toLowerCase());
+};
+
+const readPresenceMap = (): Record<string, number> => {
+  try {
+    const raw = globalThis.localStorage?.getItem(PRESENCE_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== 'object') return {};
+
+    const result: Record<string, number> = {};
+    for (const [key, value] of Object.entries(parsed as Record<string, unknown>)) {
+      if (typeof value === 'number') {
+        result[key] = value;
+      }
+    }
+    return result;
+  } catch {
+    return {};
+  }
+};
+
+const writePresenceMap = (presence: Record<string, number>): void => {
+  try {
+    globalThis.localStorage?.setItem(PRESENCE_STORAGE_KEY, JSON.stringify(presence));
+  } catch {
+    // Ignore storage failures.
+  }
+};
+
+const getActivePresenceMap = (): Record<string, number> => {
+  const now = Date.now();
+  const presence = readPresenceMap();
+  const activeEntries = Object.entries(presence).filter(([, lastSeenAt]) => now - lastSeenAt <= ONLINE_TTL_MS);
+  const cleaned = Object.fromEntries(activeEntries);
+  if (activeEntries.length !== Object.keys(presence).length) {
+    writePresenceMap(cleaned);
+  }
+  return cleaned;
+};
+
+const setUserOnline = (username: string): void => {
+  const presence = getActivePresenceMap();
+  presence[username] = Date.now();
+  writePresenceMap(presence);
+};
+
+const setUserOffline = (username: string): void => {
+  const presence = getActivePresenceMap();
+  if (presence[username]) {
+    delete presence[username];
+    writePresenceMap(presence);
+  }
+};
+
 const createShareToken = (): string => {
   const cryptoApi = globalThis.crypto;
   if (cryptoApi?.getRandomValues) {
@@ -123,6 +183,7 @@ export const useStore = create<AppState>()(
         const user = users[safeUsername];
         if (user && user.password === safePassword) {
           clearFailedLogin(safeUsername);
+          setUserOnline(safeUsername);
           const userData = get().userData[safeUsername] || createDefaultUserData();
 
           set({
@@ -165,10 +226,27 @@ export const useStore = create<AppState>()(
       },
 
       logout: () => {
+        const currentUser = get().auth.currentUser;
+        if (currentUser) {
+          setUserOffline(currentUser);
+        }
+
         set({
           auth: { isAuthenticated: false, currentUser: null },
           activeUser: null,
         });
+      },
+
+      markCurrentUserOnline: () => {
+        const currentUser = get().auth.currentUser;
+        if (!currentUser) return;
+        setUserOnline(currentUser);
+      },
+
+      markCurrentUserOffline: () => {
+        const currentUser = get().auth.currentUser;
+        if (!currentUser) return;
+        setUserOffline(currentUser);
       },
 
       // Helper to get current user data
@@ -767,19 +845,22 @@ export const useStore = create<AppState>()(
 
       getPlatformStats: () => {
         const { auth, users, userData } = get();
-        if (auth.currentUser !== 'admin') return null;
+        if (!isAdminUser(auth.currentUser)) return null;
 
         const totalUsers = Object.keys(users).length;
+        const knownUsers = new Set(Object.keys(users));
         const dataList = Object.values(userData);
         const activeUsersLast30Days = dataList.filter((ud) =>
           isWithinLastDays(ud.lastActiveDate, 30)
         ).length;
         const usersWithCourses = dataList.filter((ud) => ud.courses.length > 0).length;
+        const onlineUsersNow = Object.keys(getActivePresenceMap()).filter((username) => knownUsers.has(username)).length;
 
         return {
           totalUsers,
           activeUsersLast30Days,
           usersWithCourses,
+          onlineUsersNow,
         };
       },
     }),

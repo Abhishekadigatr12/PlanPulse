@@ -18,7 +18,7 @@ import { useStore } from '../store/useStore';
 import type { Difficulty } from '../types';
 
 export function AnalyticsPage() {
-  const { auth, getCurrentUserData, getProgressLogs, getPlatformStats } = useStore();
+  const { getCurrentUserData, getProgressLogs, getPlatformStats } = useStore();
   const userData = getCurrentUserData();
   const [filter, setFilter] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const platformStats = getPlatformStats();
@@ -123,12 +123,18 @@ export function AnalyticsPage() {
         </div>
       </div>
 
-      {auth.currentUser === 'admin' && platformStats && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      {platformStats && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
             <p className="text-sm text-slate-500 mb-1">Registered Users</p>
             <p className="text-3xl font-bold text-slate-800">{platformStats.totalUsers}</p>
             <p className="text-sm text-slate-500 mt-2">Total accounts in this app</p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <p className="text-sm text-slate-500 mb-1">Online Now</p>
+            <p className="text-3xl font-bold text-emerald-600">{platformStats.onlineUsersNow}</p>
+            <p className="text-sm text-slate-500 mt-2">Users active right now</p>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
