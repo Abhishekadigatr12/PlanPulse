@@ -23,7 +23,15 @@ export function AnalyticsPage() {
   const [filter, setFilter] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const platformStats = getPlatformStats();
 
-  if (!userData) return null;
+  if (!userData) {
+    return (
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
+        <div className="text-5xl mb-4">🛡️</div>
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">User data not available</h2>
+        <p className="text-slate-500">Please sign in again to continue.</p>
+      </div>
+    );
+  }
 
   const courses = userData.courses;
   const progressLogs = getProgressLogs(filter);

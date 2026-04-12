@@ -9,7 +9,15 @@ export function LearnPage() {
   const [filterDifficulty, setFilterDifficulty] = useState<Difficulty | 'all'>('all');
   const [filterStatus, setFilterStatus] = useState<'all' | 'completed' | 'pending'>('all');
 
-  if (!userData) return null;
+  if (!userData) {
+    return (
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
+        <div className="text-5xl mb-4">🛡️</div>
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">User data not available</h2>
+        <p className="text-slate-500">Please sign in again to continue.</p>
+      </div>
+    );
+  }
 
   const courses = userData.courses;
 
@@ -144,7 +152,7 @@ export function LearnPage() {
               >
                 <button
                   onClick={() => toggleItem(item.courseId, item.topicId, item.id)}
-                  className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
+                  className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors shrink-0 ${
                     item.completed
                       ? 'bg-green-500 border-green-500 text-white'
                       : 'border-slate-300 hover:border-green-400'

@@ -6,7 +6,15 @@ export function DashboardPage() {
   const userData = getCurrentUserData();
   const streak = getStreak();
 
-  if (!userData) return null;
+  if (!userData) {
+    return (
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
+        <div className="text-5xl mb-4">🛡️</div>
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">User data not available</h2>
+        <p className="text-slate-500">Please sign in again to continue.</p>
+      </div>
+    );
+  }
 
   const courses = userData.courses;
   const totalTopics = courses.reduce((acc, c) => acc + c.topics.length, 0);
@@ -52,7 +60,7 @@ export function DashboardPage() {
                 <p className="text-3xl font-bold text-slate-800 mt-1">{stat.value}</p>
               </div>
               <div
-                className={`w-12 h-12 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center text-2xl shadow-lg`}
+                className={`w-12 h-12 rounded-lg bg-linear-to-br ${stat.color} flex items-center justify-center text-2xl shadow-lg`}
               >
                 {stat.icon}
               </div>
@@ -111,7 +119,7 @@ export function DashboardPage() {
                     <div className="flex items-center gap-2">
                       <div className="w-20 h-2 bg-slate-200 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all"
+                          className="h-full bg-linear-to-r from-blue-500 to-purple-500 rounded-full transition-all"
                           style={{ width: `${progress}%` }}
                         />
                       </div>
@@ -129,7 +137,7 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Link
           to="/courses"
-          className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
+          className="bg-linear-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
         >
           <div className="text-3xl mb-3">➕</div>
           <h3 className="font-bold text-lg">Add Course</h3>
@@ -138,7 +146,7 @@ export function DashboardPage() {
 
         <Link
           to="/resources"
-          className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
+          className="bg-linear-to-br from-green-500 to-green-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
         >
           <div className="text-3xl mb-3">📤</div>
           <h3 className="font-bold text-lg">Share Resource</h3>
@@ -147,7 +155,7 @@ export function DashboardPage() {
 
         <Link
           to="/analytics"
-          className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
+          className="bg-linear-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
         >
           <div className="text-3xl mb-3">📊</div>
           <h3 className="font-bold text-lg">View Analytics</h3>
