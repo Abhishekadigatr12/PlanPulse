@@ -4,7 +4,6 @@ import type { Resource } from '../types';
 interface ResourcePanelProps {
   resources: Resource[];
   currentUser: string;
-  allUsers: string[];
   addResource: (resource: Omit<Resource, 'id' | 'createdAt' | 'shareToken'>) => void;
   updateResource: (resourceId: string, updates: Partial<Resource>) => void;
   deleteResource: (resourceId: string) => void;
@@ -18,7 +17,6 @@ interface ResourcePanelProps {
 export function ResourcePanel({
   resources,
   currentUser,
-  allUsers,
   addResource,
   updateResource,
   deleteResource,
@@ -34,7 +32,6 @@ export function ResourcePanel({
     content: '',
     visibility: 'private' as Resource['visibility'],
   });
-  const [shareUser, setShareUser] = useState<Record<string, string>>({});
   const [tokenInput, setTokenInput] = useState('');
   const [requestMessage, setRequestMessage] = useState('');
   const [viewFilter, setViewFilter] = useState<'all' | 'owned' | 'shared'>('all');
@@ -212,7 +209,6 @@ export function ResourcePanel({
           const hasAccess =
             resource.visibility === 'public' || isOwner || resource.accessList.includes(currentUser);
           const pending = resource.pendingRequests.includes(currentUser);
-          const targetUser = shareUser[resource.id] || '';
           const isEditing = editingResourceId === resource.id;
 
           return (
@@ -343,24 +339,11 @@ export function ResourcePanel({
                   </div>
 
                   {canShareByUsername && (
-                    <div className="flex gap-2">
-                      <select value={targetUser} onChange={(e) => setShareUser({ ...shareUser, [resource.id]: e.target.value })} className="px-3 py-2 border border-slate-300 rounded-lg text-sm">
-                        <option value="">Share with user</option>
-                        {allUsers.filter((u) => u !== currentUser && !resource.accessList.includes(u)).map((u) => (
-                          <option key={u} value={u}>{u}</option>
-                        ))}
-                      </select>
-                      <button
-                        onClick={() => {
-                          if (!targetUser) return;
-                          approveAccess(resource.id, targetUser);
-                          setShareUser({ ...shareUser, [resource.id]: '' });
-                        }}
-                        className="px-3 py-2 bg-slate-800 text-white rounded-lg text-sm"
-                      >
-                        Share
-                      </button>
-                    </div>
+                    <button
+                      className="px-3 py-2 bg-slate-800 text-white rounded-lg text-sm"
+                    >
+                      Share
+                    </button>
                   )}
 
                   {resource.pendingRequests.map((user) => (
