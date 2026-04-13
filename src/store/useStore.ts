@@ -6,12 +6,20 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 import type { AppState, Course, Topic, Item, Note, Resource, UserData, ProgressLog } from '../types';
+import {
+  fetchCloudState,
+  isCloudSyncEnabled,
+  pushCloudState,
+  subscribeCloudState,
+  type CloudState,
+} from '../lib/cloudSync';
 
 const LOGIN_WINDOW_MS = 5 * 60 * 1000;
 const MAX_LOGIN_ATTEMPTS = 8;
 const PRESENCE_STORAGE_KEY = 'planplus-presence-v1';
 const ONLINE_TTL_MS = 90 * 1000;
 const ADMIN_USERNAMES = new Set(['admin', 'abhishek']);
+const CLOUD_PUSH_DEBOUNCE_MS = 800;
 
 const loginAttempts = new Map<string, { count: number; firstAttemptAt: number; blockedUntil: number }>();
 
@@ -157,6 +165,34 @@ const isWithinLastDays = (isoDate: string | null, days: number): boolean => {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
   return parsed >= cutoff;
+};
+
+const toCloudState = (state: AppState): CloudState => ({
+  users: state.users,
+  userData: state.userData,
+  globalResources: state.globalResources,
+  updatedAt: Date.now(),
+});
+
+const buildUnifiedResourceList = (
+  globalResources: Resource[],
+  userData: Record<string, UserData>
+): Resource[] => {
+  const byId = new Map<string, Resource>();
+
+  for (const resource of globalResources) {
+    byId.set(resource.id, resource);
+  }
+
+  for (const user of Object.values(userData)) {
+    for (const resource of user.resources) {
+      if (!byId.has(resource.id)) {
+        byId.set(resource.id, resource);
+      }
+    }
+  }
+
+  return Array.from(byId.values());
 };
 
 export const useStore = create<AppState>()(
@@ -679,20 +715,21 @@ export const useStore = create<AppState>()(
       },
 
       requestAccessByToken: (token) => {
-        const { auth, globalResources } = get();
+        const { auth, globalResources, userData } = get();
         if (!auth.currentUser) {
           return { success: false, message: 'Please log in to request access.' };
         }
         const currentUser = auth.currentUser;
         const cleanedToken = token.trim();
+        const unifiedResources = buildUnifiedResourceList(globalResources, userData);
 
         if (!/^[A-Za-z0-9]{8,64}$/.test(cleanedToken)) {
           return { success: false, message: 'Invalid token format.' };
         }
 
-        const targetResource = globalResources.find((resource) => resource.shareToken === cleanedToken);
+        const targetResource = unifiedResources.find((resource) => resource.shareToken === cleanedToken);
         if (!targetResource) {
-          return { success: false, message: 'Invalid token. Check and try again.' };
+          return { success: false, message: 'Token not found in shared resources. If your friend uses a different browser/device, this app needs backend sync to share data across devices.' };
         }
 
         const canAccess =
@@ -709,7 +746,7 @@ export const useStore = create<AppState>()(
         }
 
         set({
-          globalResources: globalResources.map((resource) =>
+          globalResources: unifiedResources.map((resource) =>
             resource.id === targetResource.id
               ? { ...resource, pendingRequests: [...resource.pendingRequests, currentUser] }
               : resource
@@ -847,8 +884,8 @@ export const useStore = create<AppState>()(
         const { auth, users, userData } = get();
         if (!isAdminUser(auth.currentUser)) return null;
 
-        const totalUsers = Object.keys(users).length;
-        const knownUsers = new Set(Object.keys(users));
+        const knownUsers = new Set([...Object.keys(users), ...Object.keys(userData)]);
+        const totalUsers = knownUsers.size;
         const dataList = Object.values(userData);
         const activeUsersLast30Days = dataList.filter((ud) =>
           isWithinLastDays(ud.lastActiveDate, 30)
@@ -870,3 +907,62 @@ export const useStore = create<AppState>()(
     }
   )
 );
+
+let suppressCloudPush = false;
+let latestCloudTimestamp = 0;
+let cloudPushTimer: ReturnType<typeof setTimeout> | null = null;
+
+const applyCloudState = (remoteState: CloudState): void => {
+  if (remoteState.updatedAt <= latestCloudTimestamp) return;
+
+  suppressCloudPush = true;
+  useStore.setState((state) => ({
+    ...state,
+    users: remoteState.users,
+    userData: remoteState.userData,
+    globalResources: remoteState.globalResources,
+  }));
+  suppressCloudPush = false;
+  latestCloudTimestamp = remoteState.updatedAt;
+};
+
+const scheduleCloudPush = (): void => {
+  if (cloudPushTimer) {
+    clearTimeout(cloudPushTimer);
+  }
+
+  cloudPushTimer = setTimeout(() => {
+    const state = useStore.getState();
+    const payload = toCloudState(state);
+    latestCloudTimestamp = payload.updatedAt;
+    void pushCloudState(payload).catch(() => undefined);
+  }, CLOUD_PUSH_DEBOUNCE_MS);
+};
+
+const initializeCloudSync = (): void => {
+  if (!isCloudSyncEnabled()) return;
+
+  void fetchCloudState().then((remoteState) => {
+    if (remoteState) {
+      applyCloudState(remoteState);
+    }
+  });
+
+  subscribeCloudState((remoteState) => {
+    applyCloudState(remoteState);
+  });
+
+  useStore.subscribe((state, previousState) => {
+    if (suppressCloudPush) return;
+
+    const hasRelevantChange =
+      state.users !== previousState.users ||
+      state.userData !== previousState.userData ||
+      state.globalResources !== previousState.globalResources;
+
+    if (!hasRelevantChange) return;
+    scheduleCloudPush();
+  });
+};
+
+initializeCloudSync();
