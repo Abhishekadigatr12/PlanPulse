@@ -11,7 +11,7 @@ const navItems = [
 
 export function Sidebar() {
   const navigate = useNavigate();
-  const { auth, logout, getStreak } = useStore();
+  const { logout, getStreak } = useStore();
   const streak = getStreak();
 
   const handleLogout = () => {
@@ -67,10 +67,10 @@ export function Sidebar() {
       <div className="p-4 border-t border-slate-700">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold">
-            {auth.currentUser?.charAt(0).toUpperCase()}
+            U
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-medium truncate">{auth.currentUser}</p>
+            <p className="font-medium truncate">User</p>
             <p className="text-xs text-slate-400">Online</p>
           </div>
         </div>
