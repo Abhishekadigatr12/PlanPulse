@@ -7,10 +7,12 @@ export function ResourcesPage() {
     users,
     globalResources,
     addResource,
+    updateResource,
     requestAccess,
     requestAccessByToken,
     approveAccess,
     rejectAccess,
+    deleteResource,
   } = useStore();
 
   if (!auth.currentUser) return null;
@@ -27,10 +29,13 @@ export function ResourcesPage() {
         currentUser={auth.currentUser}
         allUsers={Object.keys(users)}
         addResource={addResource}
+        updateResource={updateResource}
         requestAccess={requestAccess}
         requestAccessByToken={requestAccessByToken}
         approveAccess={approveAccess}
         rejectAccess={rejectAccess}
+        deleteResource={deleteResource}
+        canShareByUsername={auth.currentUser.toLowerCase() === 'admin' || auth.currentUser.toLowerCase() === 'abhishek'}
       />
     </div>
   );

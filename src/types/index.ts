@@ -123,6 +123,7 @@ export interface AppState {
   
   // Actions - Resources
   addResource: (resource: Omit<Resource, 'id' | 'createdAt' | 'shareToken'>) => void;
+  updateResource: (resourceId: string, updates: Partial<Resource>) => void;
   requestAccess: (resourceId: string) => void;
   requestAccessByToken: (token: string) => { success: boolean; message: string };
   approveAccess: (resourceId: string, username: string) => void;

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI;
+const DB_NAME = process.env.MONGODB_DB_NAME || 'planplus';
 
 if (!MONGODB_URI) {
   throw new Error('MONGODB_URI is not configured');
@@ -14,15 +15,16 @@ if (!globalForMongoose.__mongooseCache) {
 
 const cache = globalForMongoose.__mongooseCache;
 
-export async function connectToDatabase() {
+export async function connectDb() {
   if (cache.conn) {
     return cache.conn;
   }
 
   if (!cache.promise) {
     cache.promise = mongoose.connect(MONGODB_URI, {
-      dbName: process.env.MONGODB_DB_NAME || 'planplus',
-      autoIndex: true,
+      dbName: DB_NAME,
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
     });
   }
 

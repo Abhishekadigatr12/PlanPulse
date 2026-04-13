@@ -195,6 +195,67 @@ const buildUnifiedResourceList = (
   return Array.from(byId.values());
 };
 
+const fetchCoursesFromApi = async (ownerUsername: string): Promise<Course[] | null> => {
+  try {
+    const response = await fetch(`/api/course?ownerUsername=${encodeURIComponent(ownerUsername)}`);
+    if (!response.ok) return null;
+    const payload = (await response.json()) as { courses?: Array<Partial<Course>> };
+    if (!Array.isArray(payload.courses)) return null;
+
+    return payload.courses
+      .map((course) => {
+        if (!course.id || !course.title) return null;
+        return {
+          id: course.id,
+          title: course.title,
+          description: course.description || '',
+          topics: Array.isArray(course.topics) ? course.topics : [],
+          createdAt: course.createdAt || new Date().toISOString(),
+          updatedAt: course.updatedAt || new Date().toISOString(),
+        } as Course;
+      })
+      .filter((course): course is Course => Boolean(course));
+  } catch {
+    return null;
+  }
+};
+
+const postCourseToApi = async (
+  ownerUsername: string,
+  course: Omit<Course, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<void> => {
+  try {
+    await fetch('/api/course', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ownerUsername,
+        title: course.title,
+        description: course.description,
+        topics: course.topics,
+      }),
+    });
+  } catch {
+    // Keep local-first behavior if API is unavailable.
+  }
+};
+
+const postResourceToApi = async (resource: Omit<Resource, 'id' | 'createdAt' | 'shareToken'>): Promise<void> => {
+  try {
+    await fetch('/api/resource', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(resource),
+    });
+  } catch {
+    // Keep local-first behavior if API is unavailable.
+  }
+};
+
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
@@ -230,6 +291,23 @@ export const useStore = create<AppState>()(
               [safeUsername]: userData,
             },
           });
+
+          void fetchCoursesFromApi(safeUsername).then((remoteCourses) => {
+            if (!remoteCourses) return;
+            set((state) => {
+              const current = state.userData[safeUsername] || createDefaultUserData();
+              return {
+                userData: {
+                  ...state.userData,
+                  [safeUsername]: {
+                    ...current,
+                    courses: remoteCourses,
+                  },
+                },
+              };
+            });
+          });
+
           return true;
         }
         trackFailedLogin(safeUsername);
@@ -314,6 +392,8 @@ export const useStore = create<AppState>()(
             },
           },
         });
+
+        void postCourseToApi(auth.currentUser, courseData);
       },
 
       updateCourse: (courseId, updates) => {
@@ -695,6 +775,31 @@ export const useStore = create<AppState>()(
             },
           },
           globalResources: [...globalResources, newResource],
+        });
+
+        void postResourceToApi(resourceData);
+      },
+
+      updateResource: (resourceId, updates) => {
+        const { auth, userData, globalResources } = get();
+        if (!auth.currentUser) return;
+
+        const currentUserData = userData[auth.currentUser];
+        if (!currentUserData) return;
+
+        set({
+          userData: {
+            ...userData,
+            [auth.currentUser]: {
+              ...currentUserData,
+              resources: currentUserData.resources.map((resource) =>
+                resource.id === resourceId ? { ...resource, ...updates } : resource
+              ),
+            },
+          },
+          globalResources: globalResources.map((resource) =>
+            resource.id === resourceId ? { ...resource, ...updates } : resource
+          ),
         });
       },
 

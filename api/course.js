@@ -1,40 +1,49 @@
-import { connectToDatabase } from './_lib/mongoose.js';
-import { Course } from './_models/Course.js';
+import { connectDb } from './_lib/db.js';
+import { CourseModel } from './models/Course.js';
 
-function sendMethodNotAllowed(res) {
-  res.setHeader('Allow', 'GET, POST');
-  return res.status(405).json({ error: 'Method not allowed' });
+function serializeCourse(doc) {
+  const plain = typeof doc.toObject === 'function' ? doc.toObject() : doc;
+  return {
+    id: String(plain._id),
+    title: plain.title,
+    description: plain.description || '',
+    topics: Array.isArray(plain.topics) ? plain.topics : [],
+    createdAt: plain.createdAt || new Date().toISOString(),
+    updatedAt: plain.updatedAt || new Date().toISOString(),
+    ownerUsername: plain.ownerUsername,
+  };
 }
 
 export default async function handler(req, res) {
   try {
-    await connectToDatabase();
+    await connectDb();
 
     if (req.method === 'POST') {
-      const { title, description = '', ownerUsername, topics = [] } = req.body || {};
+      const { ownerUsername, title, description = '', topics = [] } = req.body || {};
 
-      if (!title || !ownerUsername) {
-        return res.status(400).json({ error: 'title and ownerUsername are required' });
+      if (!ownerUsername || !title) {
+        return res.status(400).json({ error: 'ownerUsername and title are required' });
       }
 
-      const createdCourse = await Course.create({
+      const course = await CourseModel.create({
+        ownerUsername,
         title,
         description,
-        ownerUsername,
-        topics,
+        topics: Array.isArray(topics) ? topics : [],
       });
 
-      return res.status(201).json({ course: createdCourse });
+      return res.status(201).json({ course: serializeCourse(course) });
     }
 
     if (req.method === 'GET') {
-      const ownerUsername = req.query?.ownerUsername;
-      const filter = ownerUsername ? { ownerUsername } : {};
-      const courses = await Course.find(filter).sort({ createdAt: -1 }).lean();
-      return res.status(200).json({ courses });
+      const ownerUsername = typeof req.query.ownerUsername === 'string' ? req.query.ownerUsername : undefined;
+      const query = ownerUsername ? { ownerUsername } : {};
+
+      const courses = await CourseModel.find(query).sort({ updatedAt: -1 }).lean();
+      return res.status(200).json({ courses: courses.map((course) => serializeCourse(course)) });
     }
 
-    return sendMethodNotAllowed(res);
+    return res.status(405).json({ error: 'Method not allowed' });
   } catch (error) {
     return res.status(500).json({ error: error instanceof Error ? error.message : 'Server error' });
   }
