@@ -1,7 +1,9 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "routes": [
     { "src": "^/api/(.*)", "dest": "/api/$1" },
-    { "src": "^/(favicon\\.ico|favicon-\\d+x\\d+\\.png|apple-touch-icon\\.png|android-chrome.*\\.png|site\\.webmanifest)$", "dest": "/$1" },
+    { "src": "/public/(.*)", "dest": "/public/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

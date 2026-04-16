@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { NotesEditor } from '../components/NotesEditor';
 import { useStore } from '../store/useStore';
 import type { Note } from '../types';
@@ -15,6 +15,7 @@ const emptyNote: Note = {
 
 export function NotesEditorPage() {
   const { courseId, topicId, itemId } = useParams();
+  const navigate = useNavigate();
   const { getCurrentUserData, updateNote, toggleItem } = useStore();
   const userData = getCurrentUserData();
 
@@ -34,6 +35,7 @@ export function NotesEditorPage() {
 
   const onSave = () => {
     updateNote(course.id, topic.id, item.id, note);
+    navigate(`/course/${course.id}/topic/${topic.id}`);
   };
 
   return (

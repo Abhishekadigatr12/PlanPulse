@@ -106,6 +106,43 @@ export function ResourcePanel({
 
   return (
     <div className="space-y-6">
+      {/* Incoming Requests Section */}
+      {(() => {
+        const incomingRequests = resources
+          .filter((r) => r.createdBy === currentUser && r.pendingRequests.length > 0)
+          .flatMap((r) => r.pendingRequests.map((user) => ({ user, resource: r })));
+
+        return incomingRequests.length > 0 ? (
+          <div className="bg-blue-50 rounded-xl border border-blue-200 p-4">
+            <h2 className="font-semibold text-blue-900 mb-3">Incoming Requests ({incomingRequests.length})</h2>
+            <div className="space-y-2">
+              {incomingRequests.map(({ user, resource }) => (
+                <div key={`${resource.id}-${user}`} className="flex items-center justify-between bg-white px-4 py-3 rounded-lg border border-blue-100">
+                  <div>
+                    <span className="text-sm font-medium text-slate-800">{user}</span>
+                    <p className="text-xs text-slate-500">requested access to "{resource.title}"</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => approveAccess(resource.id, user)} 
+                      className="px-3 py-1 bg-green-600 text-white rounded text-xs font-medium hover:bg-green-700"
+                    >
+                      Approve
+                    </button>
+                    <button 
+                      onClick={() => rejectAccess(resource.id, user)} 
+                      className="px-3 py-1 bg-red-600 text-white rounded text-xs font-medium hover:bg-red-700"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null;
+      })()}
+
       <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
         <h2 className="font-semibold text-slate-800">Request Access by Token</h2>
         <div className="flex gap-2">
@@ -345,16 +382,6 @@ export function ResourcePanel({
                       Share
                     </button>
                   )}
-
-                  {resource.pendingRequests.map((user) => (
-                    <div key={user} className="flex items-center justify-between bg-slate-50 px-3 py-2 rounded-lg">
-                      <span className="text-sm">{user} requested access</span>
-                      <div className="flex gap-2">
-                        <button onClick={() => approveAccess(resource.id, user)} className="text-green-600 text-sm">Approve</button>
-                        <button onClick={() => rejectAccess(resource.id, user)} className="text-red-600 text-sm">Reject</button>
-                      </div>
-                    </div>
-                  ))}
                 </div>
               )}
             </div>
