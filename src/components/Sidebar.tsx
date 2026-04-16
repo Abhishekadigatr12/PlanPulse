@@ -9,7 +9,12 @@ const navItems = [
   { path: '/analytics', label: 'Analytics', icon: 'AN' },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+}
+
+export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const navigate = useNavigate();
   const { auth, logout, getStreak } = useStore();
   const streak = getStreak();
@@ -19,8 +24,12 @@ export function Sidebar() {
     navigate('/login');
   };
 
+  const handleNavClick = () => {
+    setSidebarOpen(false);
+  };
+
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-slate-900 text-white flex flex-col">
+    <aside className={`fixed left-0 top-0 h-full w-64 bg-slate-900 text-white flex flex-col transform transition-transform duration-300 z-40 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
       {/* Logo */}
       <div className="p-6 border-b border-slate-700">
         <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
@@ -47,6 +56,7 @@ export function Sidebar() {
             <li key={item.path}>
               <NavLink
                 to={item.path}
+                onClick={handleNavClick}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-6 py-3 transition-all duration-200 ${
                     isActive

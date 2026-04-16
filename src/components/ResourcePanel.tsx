@@ -144,12 +144,12 @@ export function ResourcePanel({
       })()}
 
       <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
-        <h2 className="font-semibold text-slate-800">Request Access by Token</h2>
-        <div className="flex gap-2">
+        <h2 className="font-semibold text-slate-800 text-base md:text-lg">Request Access by Token</h2>
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             value={tokenInput}
             onChange={(e) => setTokenInput(e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
             placeholder="Enter Resource Token"
           />
           <button
@@ -160,7 +160,7 @@ export function ResourcePanel({
                 setTokenInput('');
               }
             }}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm whitespace-nowrap"
           >
             Request Access
           </button>
@@ -169,23 +169,23 @@ export function ResourcePanel({
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
-        <h2 className="font-semibold text-slate-800">Add Resource</h2>
-        <input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg" placeholder="Resource title" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-          <select value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value as Resource['type'] })} className="px-3 py-2 border border-slate-300 rounded-lg">
+        <h2 className="font-semibold text-slate-800 text-base md:text-lg">Add Resource</h2>
+        <input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" placeholder="Resource title" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+          <select value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value as Resource['type'] })} className="px-3 py-2 border border-slate-300 rounded-lg text-sm">
             <option value="link">Link</option>
             <option value="video">Video</option>
             <option value="doc">Doc</option>
             <option value="note">Note</option>
           </select>
-          <select value={formData.visibility} onChange={(e) => setFormData({ ...formData, visibility: e.target.value as Resource['visibility'] })} className="px-3 py-2 border border-slate-300 rounded-lg">
+          <select value={formData.visibility} onChange={(e) => setFormData({ ...formData, visibility: e.target.value as Resource['visibility'] })} className="px-3 py-2 border border-slate-300 rounded-lg text-sm">
             <option value="private">Private</option>
             <option value="public">Public</option>
           </select>
-          <input value={formData.url} onChange={(e) => setFormData({ ...formData, url: e.target.value })} className="px-3 py-2 border border-slate-300 rounded-lg" placeholder="URL" />
+          <input value={formData.url} onChange={(e) => setFormData({ ...formData, url: e.target.value })} className="px-3 py-2 border border-slate-300 rounded-lg text-sm" placeholder="URL" />
         </div>
         {formData.type === 'note' && (
-          <textarea value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg" rows={3} placeholder="Resource note" />
+          <textarea value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" rows={3} placeholder="Resource note" />
         )}
         <button
           onClick={() => {
@@ -202,18 +202,18 @@ export function ResourcePanel({
             });
             setFormData({ title: '', type: 'link', url: '', content: '', visibility: 'private' });
           }}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm"
         >
           Add Resource
         </button>
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           <select
             value={viewFilter}
             onChange={(e) => setViewFilter(e.target.value as 'all' | 'owned' | 'shared')}
-            className="px-3 py-2 border border-slate-300 rounded-lg"
+            className="px-3 py-2 border border-slate-300 rounded-lg text-sm"
           >
             <option value="all">All Resources</option>
             <option value="owned">Owned by Me</option>
@@ -223,14 +223,14 @@ export function ResourcePanel({
           <input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-3 py-2 border border-slate-300 rounded-lg"
+            className="px-3 py-2 border border-slate-300 rounded-lg text-sm"
             placeholder="Search by name, type, or owner"
           />
 
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest' | 'name-asc' | 'name-desc')}
-            className="px-3 py-2 border border-slate-300 rounded-lg"
+            className="px-3 py-2 border border-slate-300 rounded-lg text-sm"
           >
             <option value="newest">Time Added: Newest</option>
             <option value="oldest">Time Added: Oldest</option>

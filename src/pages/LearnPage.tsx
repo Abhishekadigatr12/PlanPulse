@@ -63,39 +63,39 @@ export function LearnPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-800">Learn</h1>
-        <p className="text-slate-500 mt-1">Track and complete your learning items</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">Learn</h1>
+        <p className="text-slate-500 mt-1 text-sm sm:text-base">Track and complete your learning items</p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 text-center">
-          <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
-          <p className="text-xs text-slate-500">Total Items</p>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-4 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 md:p-4 text-center">
+          <p className="text-xl md:text-2xl font-bold text-slate-800">{stats.total}</p>
+          <p className="text-xs text-slate-500 mt-1">Total Items</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 text-center">
-          <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
-          <p className="text-xs text-slate-500">Completed</p>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 md:p-4 text-center">
+          <p className="text-xl md:text-2xl font-bold text-green-600">{stats.completed}</p>
+          <p className="text-xs text-slate-500 mt-1">Completed</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-green-200 p-4 text-center">
-          <p className="text-2xl font-bold text-green-600">{stats.easy}</p>
-          <p className="text-xs text-slate-500">Easy</p>
+        <div className="bg-white rounded-xl shadow-sm border border-green-200 p-3 md:p-4 text-center">
+          <p className="text-xl md:text-2xl font-bold text-green-600">{stats.easy}</p>
+          <p className="text-xs text-slate-500 mt-1">Easy</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-yellow-200 p-4 text-center">
-          <p className="text-2xl font-bold text-yellow-600">{stats.medium}</p>
-          <p className="text-xs text-slate-500">Medium</p>
+        <div className="bg-white rounded-xl shadow-sm border border-yellow-200 p-3 md:p-4 text-center">
+          <p className="text-xl md:text-2xl font-bold text-yellow-600">{stats.medium}</p>
+          <p className="text-xs text-slate-500 mt-1">Medium</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-red-200 p-4 text-center">
-          <p className="text-2xl font-bold text-red-600">{stats.hard}</p>
-          <p className="text-xs text-slate-500">Hard</p>
+        <div className="bg-white rounded-xl shadow-sm border border-red-200 p-3 md:p-4 text-center">
+          <p className="text-xl md:text-2xl font-bold text-red-600">{stats.hard}</p>
+          <p className="text-xs text-slate-500 mt-1">Hard</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div>
           <label className="block text-xs font-medium text-slate-500 mb-1">Difficulty</label>
           <select

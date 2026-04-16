@@ -40,24 +40,24 @@ export function DashboardPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-800">Dashboard</h1>
-        <p className="text-slate-500 mt-1">Welcome back, {userData.courses.length > 0 ? 'Learner' : 'New Student'}!</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">Dashboard</h1>
+        <p className="text-slate-500 mt-1 text-sm sm:text-base">Welcome back, {userData.courses.length > 0 ? 'Learner' : 'New Student'}!</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8">
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow"
+            className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 hover:shadow-md transition-shadow"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col items-start gap-2">
               <div>
-                <p className="text-sm text-slate-500 font-medium">{stat.label}</p>
-                <p className="text-3xl font-bold text-slate-800 mt-1">{stat.value}</p>
+                <p className="text-xs md:text-sm text-slate-500 font-medium">{stat.label}</p>
+                <p className="text-2xl md:text-3xl font-bold text-slate-800 mt-1">{stat.value}</p>
               </div>
               <div
                 className={`w-12 h-12 rounded-lg bg-linear-to-br ${stat.color} flex items-center justify-center text-2xl shadow-lg`}

@@ -105,34 +105,34 @@ export function CourseDetailPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto px-4">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-        <Link to="/courses" className="hover:text-blue-600">
+      <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 mb-6 overflow-x-auto">
+        <Link to="/courses" className="hover:text-blue-600 whitespace-nowrap">
           Courses
         </Link>
         <span>›</span>
-        <span className="text-slate-800 font-medium">{course.title}</span>
+        <span className="text-slate-800 font-medium truncate">{course.title}</span>
       </div>
 
       {/* Course Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-slate-800">{course.title}</h1>
-            <p className="text-slate-500 mt-2">{course.description || 'No description'}</p>
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-4 mb-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 truncate">{course.title}</h1>
+            <p className="text-slate-500 mt-2 text-sm sm:text-base line-clamp-2">{course.description || 'No description'}</p>
           </div>
           <button
             onClick={() => navigate('/courses')}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg"
+            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg whitespace-nowrap flex-shrink-0"
           >
             ← Back
           </button>
         </div>
 
-        <div className="mt-6 flex items-center gap-6">
+        <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
           <div className="flex-1">
-            <div className="flex items-center justify-between text-sm mb-2">
+            <div className="flex items-center justify-between text-xs sm:text-sm mb-2">
               <span className="text-slate-500">Overall Progress</span>
               <span className="font-semibold text-slate-800">{progress}%</span>
             </div>
@@ -143,7 +143,7 @@ export function CourseDetailPage() {
               />
             </div>
           </div>
-          <div className="text-center">
+          <div className="text-center flex-shrink-0">
             <p className="text-2xl font-bold text-slate-800">{course.topics.length}</p>
             <p className="text-xs text-slate-500">Topics</p>
           </div>
@@ -151,7 +151,7 @@ export function CourseDetailPage() {
       </div>
 
       {/* Topics Section */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
         <h2 className="text-xl font-bold text-slate-800">Topics</h2>
         <button
           onClick={() => {
@@ -159,20 +159,20 @@ export function CourseDetailPage() {
             setEditingTopic(null);
             setShowAddTopic(true);
           }}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap"
         >
           <span>+</span> Add Topic
         </button>
       </div>
 
       {course.topics.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
-          <div className="text-5xl mb-4">📝</div>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 md:p-12 text-center">
+          <div className="text-5xl md:text-6xl mb-4">📝</div>
           <h3 className="text-xl font-bold text-slate-800 mb-2">No Topics Yet</h3>
-          <p className="text-slate-500 mb-4">Add topics to organize your learning materials.</p>
+          <p className="text-slate-500 mb-4 text-sm md:text-base">Add topics to organize your learning materials.</p>
           <button
             onClick={() => setShowAddTopic(true)}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors text-sm md:text-base"
           >
             Add Your First Topic
           </button>

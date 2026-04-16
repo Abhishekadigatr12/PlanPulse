@@ -43,16 +43,16 @@ export function TopicList({
 
         return (
           <div key={topic.id} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="p-4 cursor-pointer hover:bg-slate-50 transition-colors" onClick={() => toggleExpand(topic.id)}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-slate-800">{topic.title}</h3>
-                  <p className="text-sm text-slate-500">{topic.items.filter((i) => i.completed).length}/{topic.items.length} completed</p>
+            <div className="p-3 md:p-4 cursor-pointer hover:bg-slate-50 transition-colors" onClick={() => toggleExpand(topic.id)}>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-slate-800 text-sm md:text-base truncate">{topic.title}</h3>
+                  <p className="text-xs md:text-sm text-slate-500 mt-1">{topic.items.filter((i) => i.completed).length}/{topic.items.length} completed</p>
                 </div>
-                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                  <span className="text-sm text-slate-600">{topicProgress}%</span>
-                  <button onClick={() => onEditTopic(topic)} className="text-sm text-blue-600">Edit</button>
-                  <button onClick={() => onDeleteTopic(topic.id)} className="text-sm text-red-600">Delete</button>
+                <div className="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto" onClick={(e) => e.stopPropagation()}>
+                  <span className="text-xs md:text-sm text-slate-600 flex-shrink-0">{topicProgress}%</span>
+                  <button onClick={() => onEditTopic(topic)} className="text-xs md:text-sm text-blue-600 hover:text-blue-700 font-medium">Edit</button>
+                  <button onClick={() => onDeleteTopic(topic.id)} className="text-xs md:text-sm text-red-600 hover:text-red-700 font-medium">Delete</button>
                 </div>
               </div>
             </div>

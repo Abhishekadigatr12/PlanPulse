@@ -32,46 +32,46 @@ export function NotesEditor({ note, onChange }: NotesEditorProps) {
   return (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">Title</label>
+        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-2">Title</label>
         <input
           value={note.title}
           onChange={(e) => onChange({ ...note, title: e.target.value })}
-          className="w-full px-4 py-3 border border-slate-300 rounded-lg"
+          className="w-full px-4 py-3 border border-slate-300 rounded-lg text-sm"
           placeholder="Subtopic note title"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">Main Notes</label>
+        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-2">Main Notes</label>
         <textarea
           value={note.content}
           onChange={(e) => onChange({ ...note, content: e.target.value })}
-          className="w-full h-56 px-4 py-3 border border-slate-300 rounded-lg resize-none"
+          className="w-full h-56 px-4 py-3 border border-slate-300 rounded-lg resize-none text-sm"
           placeholder="Write key concepts, approach, and edge cases."
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">Code Snippets</label>
-        <div className="flex gap-2">
-          <textarea value={newCode} onChange={(e) => setNewCode(e.target.value)} className="flex-1 px-4 py-2 border border-slate-300 rounded-lg" rows={3} />
-          <button onClick={() => { pushValue('codeSnippets', newCode); setNewCode(''); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Add</button>
+        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-2">Code Snippets</label>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <textarea value={newCode} onChange={(e) => setNewCode(e.target.value)} className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-sm" rows={3} />
+          <button onClick={() => { pushValue('codeSnippets', newCode); setNewCode(''); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm whitespace-nowrap">Add</button>
         </div>
         <div className="space-y-2 mt-2">
           {note.codeSnippets.map((snippet, i) => (
-            <div key={i} className="bg-slate-900 text-green-400 p-3 rounded-lg text-sm flex justify-between gap-3">
-              <pre className="overflow-x-auto"><code>{snippet}</code></pre>
-              <button onClick={() => removeValue('codeSnippets', i)} className="text-red-400">Remove</button>
+            <div key={i} className="bg-slate-900 text-green-400 p-3 rounded-lg text-xs md:text-sm flex flex-col sm:flex-row justify-between gap-3 overflow-x-auto">
+              <pre className="overflow-x-auto flex-1"><code>{snippet}</code></pre>
+              <button onClick={() => removeValue('codeSnippets', i)} className="text-red-400 text-sm flex-shrink-0">Remove</button>
             </div>
           ))}
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">Videos (YouTube)</label>
-        <div className="flex gap-2">
-          <input value={newVideo} onChange={(e) => setNewVideo(e.target.value)} className="flex-1 px-4 py-2 border border-slate-300 rounded-lg" placeholder="https://www.youtube.com/watch?v=..." />
-          <button onClick={() => { pushValue('videos', newVideo); setNewVideo(''); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Add</button>
+        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-2">Videos (YouTube)</label>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input value={newVideo} onChange={(e) => setNewVideo(e.target.value)} className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-sm" placeholder="https://www.youtube.com/watch?v=..." />
+          <button onClick={() => { pushValue('videos', newVideo); setNewVideo(''); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm whitespace-nowrap">Add</button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
           {note.videos.map((video, i) => (
@@ -79,23 +79,23 @@ export function NotesEditor({ note, onChange }: NotesEditorProps) {
               <div className="aspect-video rounded-lg overflow-hidden bg-slate-100">
                 <iframe className="w-full h-full" src={getYouTubeEmbedUrl(video)} title={`video-${i}`} allowFullScreen />
               </div>
-              <button onClick={() => removeValue('videos', i)} className="text-red-500 text-sm">Remove</button>
+              <button onClick={() => removeValue('videos', i)} className="text-red-500 text-xs md:text-sm">Remove</button>
             </div>
           ))}
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">Links</label>
-        <div className="flex gap-2">
-          <input value={newLink} onChange={(e) => setNewLink(e.target.value)} className="flex-1 px-4 py-2 border border-slate-300 rounded-lg" placeholder="https://..." />
-          <button onClick={() => { pushValue('links', newLink); setNewLink(''); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Add</button>
+        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-2">Links</label>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input value={newLink} onChange={(e) => setNewLink(e.target.value)} className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-sm" placeholder="https://..." />
+          <button onClick={() => { pushValue('links', newLink); setNewLink(''); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm whitespace-nowrap">Add</button>
         </div>
         <div className="mt-2 space-y-2">
           {note.links.map((link, i) => (
-            <div key={i} className="flex items-center justify-between bg-slate-50 p-2 rounded-lg">
-              <a className="text-blue-600 truncate" href={link} target="_blank" rel="noreferrer">{link}</a>
-              <button onClick={() => removeValue('links', i)} className="text-red-500 text-sm">Remove</button>
+            <div key={i} className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-slate-50 p-2 rounded-lg gap-2">
+              <a className="text-blue-600 truncate text-xs md:text-sm" href={link} target="_blank" rel="noreferrer">{link}</a>
+              <button onClick={() => removeValue('links', i)} className="text-red-500 text-xs md:text-sm flex-shrink-0">Remove</button>
             </div>
           ))}
         </div>
@@ -103,26 +103,26 @@ export function NotesEditor({ note, onChange }: NotesEditorProps) {
 
       {pdfLinks.length > 0 && (
         <div>
-          <p className="block text-sm font-medium text-slate-700 mb-2">PDF Preview</p>
+          <p className="block text-xs md:text-sm font-medium text-slate-700 mb-2">PDF Preview</p>
           <div className="space-y-3">
             {pdfLinks.map((pdf, index) => (
-              <iframe key={pdf + index} src={pdf} className="w-full h-72 rounded-lg border border-slate-200" title={`pdf-${index}`} />
+              <iframe key={pdf + index} src={pdf} className="w-full h-56 md:h-72 rounded-lg border border-slate-200" title={`pdf-${index}`} />
             ))}
           </div>
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">Images</label>
-        <div className="flex gap-2">
-          <input value={newImage} onChange={(e) => setNewImage(e.target.value)} className="flex-1 px-4 py-2 border border-slate-300 rounded-lg" placeholder="https://image-url" />
-          <button onClick={() => { pushValue('images', newImage); setNewImage(''); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Add</button>
+        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-2">Images</label>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input value={newImage} onChange={(e) => setNewImage(e.target.value)} className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-sm" placeholder="https://image-url" />
+          <button onClick={() => { pushValue('images', newImage); setNewImage(''); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm whitespace-nowrap">Add</button>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
           {note.images.map((image, i) => (
             <div key={i}>
-              <img src={image} alt={`note-${i}`} className="w-full h-28 object-cover rounded-lg" />
-              <button onClick={() => removeValue('images', i)} className="text-red-500 text-sm mt-1">Remove</button>
+              <img src={image} alt={`note-${i}`} className="w-full h-20 md:h-28 object-cover rounded-lg" />
+              <button onClick={() => removeValue('images', i)} className="text-red-500 text-xs md:text-sm mt-1">Remove</button>
             </div>
           ))}
         </div>

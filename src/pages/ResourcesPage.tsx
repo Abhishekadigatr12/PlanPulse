@@ -18,10 +18,10 @@ export function ResourcesPage() {
   if (!auth.currentUser) return null;
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto px-4">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-800">Resources</h1>
-        <p className="text-slate-500 mt-1">Share by username, request access, and manage approvals.</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">Resources</h1>
+        <p className="text-slate-500 mt-1 text-sm sm:text-base">Share by username, request access, and manage approvals.</p>
       </div>
 
       <ResourcePanel

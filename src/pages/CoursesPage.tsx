@@ -95,36 +95,36 @@ export function CoursesPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Courses</h1>
-          <p className="text-slate-500 mt-1">Manage your learning paths</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">Courses</h1>
+          <p className="text-slate-500 mt-1 text-sm sm:text-base">Manage your learning paths</p>
         </div>
         <button
           onClick={handleOpenAdd}
-          className="px-6 py-3 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+          className="px-4 md:px-6 py-2 md:py-3 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center gap-2 text-sm md:text-base whitespace-nowrap"
         >
           <span className="text-xl">+</span>
           Add Course
         </button>
       </div>
-      <button onClick={addStriverTemplate} className="mb-6 px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">
+      <button onClick={addStriverTemplate} className="mb-6 px-3 md:px-4 py-2 border border-slate-300 rounded-lg text-xs md:text-sm font-medium text-slate-700 hover:bg-slate-50">
         Add Structured DSA Template
       </button>
 
       {/* Course Grid */}
       {courses.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
-          <div className="text-6xl mb-4">📚</div>
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">No Courses Yet</h2>
-          <p className="text-slate-500 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 md:p-12 text-center">
+          <div className="text-5xl md:text-6xl mb-4">📚</div>
+          <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">No Courses Yet</h2>
+          <p className="text-slate-500 mb-6 text-sm md:text-base">
             Start building your knowledge base by creating your first course.
           </p>
           <button
             onClick={handleOpenAdd}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors text-sm md:text-base"
           >
             Create Your First Course
           </button>
@@ -140,7 +140,7 @@ export function CoursesPage() {
       {/* Add/Edit Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-slate-200">
               <h2 className="text-xl font-bold text-slate-800">
                 {editingCourse ? 'Edit Course' : 'Add New Course'}

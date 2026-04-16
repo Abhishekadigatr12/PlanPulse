@@ -25,10 +25,10 @@ export function AnalyticsPage() {
 
   if (!userData) {
     return (
-      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-8 md:p-12 text-center px-4">
         <div className="text-5xl mb-4">🛡️</div>
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">User data not available</h2>
-        <p className="text-slate-500">Please sign in again to continue.</p>
+        <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">User data not available</h2>
+        <p className="text-slate-500 text-sm md:text-base">Please sign in again to continue.</p>
       </div>
     );
   }
