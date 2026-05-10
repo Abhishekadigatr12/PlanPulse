@@ -143,6 +143,30 @@ export function ResourcePanel({
         ) : null;
       })()}
 
+      {/* My Requests Section - Requests Sent by Current User */}
+      {(() => {
+        const myRequests = resources
+          .filter((r) => r.pendingRequests.includes(currentUser))
+          .map((r) => ({ resource: r, owner: r.createdBy }));
+
+        return myRequests.length > 0 ? (
+          <div className="bg-amber-50 rounded-xl border border-amber-200 p-4">
+            <h2 className="font-semibold text-amber-900 mb-3">My Requests ({myRequests.length})</h2>
+            <div className="space-y-2">
+              {myRequests.map(({ resource, owner }) => (
+                <div key={resource.id} className="flex items-center justify-between bg-white px-4 py-3 rounded-lg border border-amber-100">
+                  <div>
+                    <span className="text-sm font-medium text-slate-800">"{resource.title}"</span>
+                    <p className="text-xs text-slate-500">from {owner} • {resource.type}</p>
+                  </div>
+                  <span className="text-amber-600 text-xs font-medium">Pending</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null;
+      })()}
+
       <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
         <h2 className="font-semibold text-slate-800 text-base md:text-lg">Request Access by Token</h2>
         <div className="flex flex-col sm:flex-row gap-2">
