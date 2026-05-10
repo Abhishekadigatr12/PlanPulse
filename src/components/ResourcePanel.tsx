@@ -20,6 +20,7 @@ export function ResourcePanel({
   addResource,
   updateResource,
   deleteResource,
+  requestAccess,
   requestAccessByToken,
   approveAccess,
   rejectAccess,
@@ -112,35 +113,39 @@ export function ResourcePanel({
           .filter((r) => r.createdBy === currentUser && r.pendingRequests.length > 0)
           .flatMap((r) => r.pendingRequests.map((user) => ({ user, resource: r })));
 
-        return incomingRequests.length > 0 ? (
+        return (
           <div className="bg-blue-50 rounded-xl border border-blue-200 p-4">
             <h2 className="font-semibold text-blue-900 mb-3">Incoming Requests ({incomingRequests.length})</h2>
-            <div className="space-y-2">
-              {incomingRequests.map(({ user, resource }) => (
-                <div key={`${resource.id}-${user}`} className="flex items-center justify-between bg-white px-4 py-3 rounded-lg border border-blue-100">
-                  <div>
-                    <span className="text-sm font-medium text-slate-800">{user}</span>
-                    <p className="text-xs text-slate-500">requested access to "{resource.title}"</p>
+            {incomingRequests.length > 0 ? (
+              <div className="space-y-2">
+                {incomingRequests.map(({ user, resource }) => (
+                  <div key={`${resource.id}-${user}`} className="flex items-center justify-between bg-white px-4 py-3 rounded-lg border border-blue-100">
+                    <div>
+                      <span className="text-sm font-medium text-slate-800">{user}</span>
+                      <p className="text-xs text-slate-500">requested access to "{resource.title}"</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => approveAccess(resource.id, user)} 
+                        className="px-3 py-1 bg-green-600 text-white rounded text-xs font-medium hover:bg-green-700"
+                      >
+                        Approve
+                      </button>
+                      <button 
+                        onClick={() => rejectAccess(resource.id, user)} 
+                        className="px-3 py-1 bg-red-600 text-white rounded text-xs font-medium hover:bg-red-700"
+                      >
+                        Reject
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => approveAccess(resource.id, user)} 
-                      className="px-3 py-1 bg-green-600 text-white rounded text-xs font-medium hover:bg-green-700"
-                    >
-                      Approve
-                    </button>
-                    <button 
-                      onClick={() => rejectAccess(resource.id, user)} 
-                      className="px-3 py-1 bg-red-600 text-white rounded text-xs font-medium hover:bg-red-700"
-                    >
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-blue-700">No incoming requests. Share your resources to receive access requests.</p>
+            )}
           </div>
-        ) : null;
+        );
       })()}
 
       {/* My Requests Section - Requests Sent by Current User */}
@@ -149,22 +154,26 @@ export function ResourcePanel({
           .filter((r) => r.pendingRequests.includes(currentUser))
           .map((r) => ({ resource: r, owner: r.createdBy }));
 
-        return myRequests.length > 0 ? (
+        return (
           <div className="bg-amber-50 rounded-xl border border-amber-200 p-4">
             <h2 className="font-semibold text-amber-900 mb-3">My Requests ({myRequests.length})</h2>
-            <div className="space-y-2">
-              {myRequests.map(({ resource, owner }) => (
-                <div key={resource.id} className="flex items-center justify-between bg-white px-4 py-3 rounded-lg border border-amber-100">
-                  <div>
-                    <span className="text-sm font-medium text-slate-800">"{resource.title}"</span>
-                    <p className="text-xs text-slate-500">from {owner} • {resource.type}</p>
+            {myRequests.length > 0 ? (
+              <div className="space-y-2">
+                {myRequests.map(({ resource, owner }) => (
+                  <div key={resource.id} className="flex items-center justify-between bg-white px-4 py-3 rounded-lg border border-amber-100">
+                    <div>
+                      <span className="text-sm font-medium text-slate-800">"{resource.title}"</span>
+                      <p className="text-xs text-slate-500">from {owner} • {resource.type}</p>
+                    </div>
+                    <span className="text-amber-600 text-xs font-medium">Pending</span>
                   </div>
-                  <span className="text-amber-600 text-xs font-medium">Pending</span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-amber-700">No pending requests. Request access to private resources using the buttons below.</p>
+            )}
           </div>
-        ) : null;
+        );
       })()}
 
       <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
@@ -362,6 +371,18 @@ export function ResourcePanel({
                 <a href={resource.url} target="_blank" rel="noreferrer" className="text-blue-600 text-sm block mt-2">
                   Open link
                 </a>
+              )}
+
+              {!hasAccess && !pending && !isOwner && resource.visibility === 'private' && (
+                <button
+                  onClick={() => {
+                    requestAccess(resource.id);
+                    setRequestMessage(`Request sent to ${resource.createdBy} for "${resource.title}"`);
+                  }}
+                  className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm mt-2"
+                >
+                  Request Access
+                </button>
               )}
 
               {isOwner && (
